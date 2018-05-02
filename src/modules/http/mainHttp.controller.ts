@@ -6,15 +6,19 @@ export class MainHttpController {
     constructor(private oauthService: OauthSevice) {
     }
 
-    @Get('vk/:idChat')
-    async oauthCodeVk(@Query() paramsVk, @Param() dataChat): Promise<any> {
-        console.log(11111, paramsVk['code']);
-        return await this.oauthService.oauth({code: paramsVk['code'], idChat: dataChat.idChat}, 'vk');
+    @Get('vk')
+    async oauthCodeVk(@Query() params): Promise<any> {
+        return await this.oauthService.oauth(params['code'], params['id'], 'vk');
     }
 
+    @Get('fb/:id')
+    async oauthCodeFb(@Query() paramsFb, @Param() dataChat): Promise<any> {
+        return await this.oauthService.oauth(paramsFb.code, dataChat.idChat, 'fb');
+    }
 
-    @Get('fb/:idChat')
-    async oauthCodeFb(@Query() paramsFb, @Param() dataChat):Promise<any> {
-        return await this.oauthService.oauth({code: paramsFb.code, idChat: dataChat.idChat}, 'fb');
+    @Get('registration')
+    async registration(): Promise<any>{
+        return await this.oauthService.createNewUser('1', 'maxxx');
     }
 }
+
