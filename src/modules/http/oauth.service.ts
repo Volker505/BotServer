@@ -1,6 +1,6 @@
 import {Component} from '@nestjs/common';
 import * as fetch from 'node-fetch';
-import {vkId, vkSec} from '../../share/dataOauth';
+import {fbId, fbSec, vkId, vkSec} from '../../share/dataOauth';
 
 @Component()
 export class OauthSevice {
@@ -8,11 +8,23 @@ export class OauthSevice {
     }
 
 //пример запроса который клиента
-//     https://oauth.vk.com/authorize?client_id=6424675&display=page&redirect_uri=http://localhost:3220/main/vk?id=009&scope=friends,photos,offline&response_type=code&v=5.69
-    async oauth(code: string, idChat: string, site: string): Promise<any> {
+//    https://oauth.vk.com/authorize?client_id=6424675&display=page&redirect_uri=http://localhost:3220/main/vk?id=1&scope=friends,offline,wall,photos&response_type=code&v=5.69
+    async oauthVk(code: string, idChat: string): Promise<any> {
         const dataUser = await fetch(`https://oauth.vk.com/access_token?client_id=${vkId}&redirect_uri=http://localhost:3220/main/vk?id=${idChat}&client_secret=${vkSec}&code=${code}`)
             .then(data => data.json());
         console.log(dataUser);
+        return await this.reqProcessServer('vk', dataUser, idChat);
+    }
+
+    //https://www.facebook.com/v3.0/dialog/oauth?client_id=593122744357882&redirect_uri=http://localhost:3220/main/fb&response_type=code&scope=email
+    async oauthFb(code: string, idChat: string){
+        const dataUsr = await fetch(`https://graph.facebook.com/v3.0/oauth/access_token?client_id=${fbId}&redirect_uri=http://localhost:3220/main/fb?id=${idChat}&client_secret=${fbSec}&code=${code}`)
+            .then(data => data.json());
+        //todo проверить данные
+        return await this.reqProcessServer('fb', dataUsr, idChat);
+    }
+
+    async reqProcessServer (site: string, dataUser: any, idChat: string){
         return await fetch(`http://localhost:8081/oauth/${site}`, {
             method: 'POST',
             body: JSON.stringify({idChat: idChat, dataSocNetUser: dataUser }),
@@ -31,5 +43,6 @@ export class OauthSevice {
         }).then( data => data.json());//todo проверить результат
         console.log(result);
     }
+
 
 }
