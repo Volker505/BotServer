@@ -17,17 +17,17 @@ export class OauthSevice {
     }
 
     //https://www.facebook.com/v3.0/dialog/oauth?client_id=593122744357882&redirect_uri=http://localhost:3220/main/fb&response_type=code&scope=email
-    async oauthFb(code: string, idChat: string){
+    async oauthFb(code: string, idChat: string) {
         const dataUsr = await fetch(`https://graph.facebook.com/v3.0/oauth/access_token?client_id=${fbId}&redirect_uri=http://localhost:3220/main/fb?id=${idChat}&client_secret=${fbSec}&code=${code}`)
             .then(data => data.json());
         //todo проверить данные
         return await this.reqProcessServer('fb', dataUsr, idChat);
     }
 
-    async reqProcessServer (site: string, dataUser: any, idChat: string){
+    async reqProcessServer(site: string, dataUser: any, idChat: string) {
         return await fetch(`http://localhost:8081/oauth/${site}`, {
             method: 'POST',
-            body: JSON.stringify({idChat: idChat, dataSocNetUser: dataUser }),
+            body: JSON.stringify({idChat: idChat, dataSocNetUser: dataUser}),
             headers: {'Content-Type': 'application/json'}
         }).then(res => {
             console.log(res);
@@ -40,9 +40,12 @@ export class OauthSevice {
             method: 'POST',
             body: JSON.stringify({chatId: chatId, userName: userName}),
             headers: {'Content-Type': 'application/json'}
-        }).then( data => data.json());//todo проверить результат
+        }).then(data => data.json());//todo проверить результат
         console.log(result);
     }
 
+    ccc() {
+        console.log(';;');
+    }
 
 }
